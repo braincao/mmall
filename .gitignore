@@ -33,6 +33,9 @@ Thumbs.db
 
 #idea
 /.idea
+.idea/
+.idea
+.idea/*
 *.ipr
 *.iml
 *.iws
