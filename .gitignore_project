@@ -1,0 +1,51 @@
+# .gitignore_project
+*.class
+####################################
+######## OS generated files ########
+####################################
+.DS_Store
+.DS_Store?
+*.swp
+._*
+.Spotlight-V100
+.Trashes
+Icon?
+ehthumbs.db
+Thumbs.db
+####################################
+############# packages #############
+####################################
+*.7z
+*.dmg
+*.gz
+*.iso
+*.rar
+*.tar
+*.zip
+*.war
+*.ear
+
+#kdiff3 ignore
+*.orig
+
+#maven ignore
+target/
+
+#idea
+.idea/
+/idea/
+*.ipr
+*.iml
+*.iws
+
+#git
+.gitignore_project
+.git/
+
+#temp file
+*.log
+*.cache
+*.diff
+*.patch
+*.tmp
+*.temp
