@@ -29,18 +29,17 @@ Thumbs.db
 *.orig
 
 #maven ignore
-target/*
+/target
 
 #idea
-.idea/*
-/idea/
+/.idea
 *.ipr
 *.iml
 *.iws
 
 #git
-.gitignore_project
 .git/
+.gitignore
 
 #temp file
 *.log
