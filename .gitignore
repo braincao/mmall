@@ -1,23 +1,51 @@
-# Compiled class file
+# .gitignore_project
 *.class
-
-# Log file
-*.log
-
-# BlueJ files
-*.ctxt
-
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
-
-# Package Files #
-*.jar
-*.war
-*.nar
-*.ear
-*.zip
-*.tar.gz
+####################################
+######## OS generated files ########
+####################################
+.DS_Store
+.DS_Store?
+*.swp
+._*
+.Spotlight-V100
+.Trashes
+Icon?
+ehthumbs.db
+Thumbs.db
+####################################
+############# packages #############
+####################################
+*.7z
+*.dmg
+*.gz
+*.iso
 *.rar
+*.tar
+*.zip
+*.war
+*.ear
 
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
-hs_err_pid*
+#kdiff3 ignore
+*.orig
+
+#maven ignore
+target/
+
+#idea
+.idea/
+/idea/
+*.ipr
+*.iml
+*.iws
+
+#git
+.gitignore_project
+.git/
+
+#temp file
+*.log
+*.cache
+*.diff
+*.patch
+*.tmp
+*.temp
