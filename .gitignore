@@ -29,11 +29,10 @@ Thumbs.db
 *.orig
 
 #maven ignore
-target/
+target/*
 
 #idea
-.idea/
-.idea
+.idea/*
 /idea/
 *.ipr
 *.iml
