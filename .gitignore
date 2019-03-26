@@ -29,7 +29,7 @@ Thumbs.db
 *.orig
 
 #maven ignore
-/targetgit rm -r --cached xxx.iml
+/target
 
 #idea
 /.idea
@@ -38,10 +38,10 @@ Thumbs.db
 *.iws
 
 #git
-.git/
-.gitignore
+/.git
 
 #temp file
+/logs
 *.log
 *.cache
 *.diff
