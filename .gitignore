@@ -1,6 +1,6 @@
 # .gitignore
-merge test
 *.class
+merge test v2
 
 #OS generated files
 .DS_Store
