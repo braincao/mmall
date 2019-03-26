@@ -1,9 +1,5 @@
 <html>
 <body>
-<<<<<<< HEAD
-<h2>Hello World git test!</h2>
-=======
-<h2>Hello World!</h2>
->>>>>>> build ssm framework -done
+<h2>Hello World build2233 test!</h2>
 </body>
 </html>
