@@ -29,7 +29,7 @@ Thumbs.db
 *.orig
 
 #maven ignore
-/target
+/targetgit rm -r --cached xxx.iml
 
 #idea
 /.idea
