@@ -46,7 +46,7 @@ public class MD5Util {
     }
 
     public static String MD5EncodeUtf8(String origin) {
-        origin = origin + PropertiesUtil.getProperty("password.salt", "");
+        origin = origin + PropertiesUtil.getProperty("password.salt", "");//加salt值后再MD5，更安全
         return MD5Encode(origin, "utf-8");
     }
 
