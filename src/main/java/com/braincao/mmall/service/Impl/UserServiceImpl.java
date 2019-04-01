@@ -52,7 +52,7 @@ public class UserServiceImpl implements IUserService {
         if(!validResponse.isSuccess()){
             return validResponse;
         }
-        validResponse  = this.checkValid(user.getUsername(), Const.EMAIL);
+        validResponse  = this.checkValid(user.getEmail(), Const.EMAIL);
         if(!validResponse.isSuccess()){
             return validResponse;
         }
@@ -75,12 +75,12 @@ public class UserServiceImpl implements IUserService {
 
     //校验用户注册信息是否有效
     public ServerResponse<String> checkValid(String str, String type){
-        if(StringUtils.isNoneBlank(type)){
+        if(StringUtils.isNoneBlank(type) && (type.equals(Const.USERNAME) || type.equals(Const.EMAIL)) ){
             //校验用户名
             if(Const.USERNAME.equals(type)){
                 int resultCount = userMapper.checkUsername(str);
                 if(resultCount > 0){
-                    return ServerResponse.createByErrorMessage("用户名已存在");
+                    return ServerResponse.createByErrorMessage("校验失败，用户名已存在");
                 }
             }
 
@@ -88,15 +88,12 @@ public class UserServiceImpl implements IUserService {
             if(Const.EMAIL.equals(type)){
                 int resultCount = userMapper.checkEmail(str);
                 if(resultCount > 0){
-                    return ServerResponse.createByErrorMessage("邮箱已存在");
+                    return ServerResponse.createByErrorMessage("校验失败，邮箱已存在");
                 }
             }
+            return ServerResponse.createBySuccessMessage("校验成功，" + type + "字段可用");
         }
-        else{
-            return ServerResponse.createByErrorMessage("参数错误");
-        }
-
-        return ServerResponse.createBySuccessMessage("校验成功");
+        return ServerResponse.createByErrorMessage("校验失败，type参数错误");
     }
 
     //忘记密码，返回用户设置的提示问题
