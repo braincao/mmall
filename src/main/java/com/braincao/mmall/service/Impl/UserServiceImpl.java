@@ -1,6 +1,7 @@
 package com.braincao.mmall.service.Impl;
 
 import com.braincao.mmall.common.Const;
+import com.braincao.mmall.common.ResponseCode;
 import com.braincao.mmall.common.ServerResponse;
 import com.braincao.mmall.common.TokenCache;
 import com.braincao.mmall.dao.UserMapper;
@@ -198,6 +199,14 @@ public class UserServiceImpl implements IUserService {
         //把用户密码置空
         user.setPassword(StringUtils.EMPTY);
         return ServerResponse.createBySuccessData(user);
+    }
+
+    //后台backend校验是否登录用户为管理员
+    public ServerResponse checkAdminRole(User user){
+        if(user!=null && user.getRole()== Const.Role.ROLE_ADMIN){
+            return ServerResponse.createBySuccess();
+        }
+        return ServerResponse.createByError();
     }
 
 }

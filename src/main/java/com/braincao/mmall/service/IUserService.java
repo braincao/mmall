@@ -32,4 +32,7 @@ public interface IUserService {
     //获取当前登录用户的详细信息
     ServerResponse<User> getInformationById(Integer userId);
 
+    //后台backend校验是否登录用户为管理员
+    ServerResponse checkAdminRole(User user);
+
 }
