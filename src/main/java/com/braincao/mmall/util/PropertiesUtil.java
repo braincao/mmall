@@ -9,7 +9,7 @@ import java.io.InputStreamReader;
 import java.util.Properties;
 
 /**
- * 用于MD5加密的工具
+ * 用于读取配置文件的工具
  */
 public class PropertiesUtil {
 
@@ -17,11 +17,13 @@ public class PropertiesUtil {
 
     private static Properties props;
 
+    //静态代码块优于普通方法，且只加载一次到JVM
     static {
-        //mmall.properties中定义password.salt = geelysdafaqj23ou89ZXcj@#$@#$#@KJdjklj;D../dSF.,
+        //指定配置文件
         String fileName = "mmall.properties";
         props = new Properties();
         try {
+            //加载配置文件
             props.load(new InputStreamReader(PropertiesUtil.class.getClassLoader().getResourceAsStream(fileName),"UTF-8"));
         } catch (IOException e) {
             logger.error("配置文件读取异常",e);

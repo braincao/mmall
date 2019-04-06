@@ -7,6 +7,7 @@ import com.braincao.mmall.pojo.Product;
 import com.braincao.mmall.pojo.User;
 import com.braincao.mmall.service.IProductService;
 import com.braincao.mmall.service.IUserService;
+import com.braincao.mmall.vo.ProductDetailVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -69,5 +70,42 @@ public class ProductManageController {
         return ServerResponse.createByErrorMessage("无权限操作，需要管理员权限");
     }
 
+    /**
+     * 产品详情
+     * @param session
+     * @param productId
+     * @return
+     */
+    @RequestMapping("detail.do")
+    @ResponseBody
+    public ServerResponse<ProductDetailVo> detail(HttpSession session, Integer productId){
+        User user = (User)session.getAttribute(Const.CURRENT_USER);
+        if(user==null){
+            return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getStatus(),"用户未登录，请登录");
+        }
+        //校验是否是管理员
+        if(iUserService.checkAdminRole(user).isSuccess()){
+            //是管理员，填充我们产品详情的业务逻辑
+            return iProductService.detail(productId);
+
+        }
+        return ServerResponse.createByErrorMessage("无权限操作，需要管理员权限");
+    }
+
+    @RequestMapping("list.do")
+    @ResponseBody
+    public ServerResponse<ProductDetailVo> detail(HttpSession session, Integer productId){
+        User user = (User)session.getAttribute(Const.CURRENT_USER);
+        if(user==null){
+            return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getStatus(),"用户未登录，请登录");
+        }
+        //校验是否是管理员
+        if(iUserService.checkAdminRole(user).isSuccess()){
+            //是管理员，填充我们产品详情的业务逻辑
+            return iProductService.detail(productId);
+
+        }
+        return ServerResponse.createByErrorMessage("无权限操作，需要管理员权限");
+    }
 
 }
