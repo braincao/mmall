@@ -10,9 +10,15 @@ import com.braincao.mmall.service.IProductService;
 import com.braincao.mmall.util.DateTimeUtil;
 import com.braincao.mmall.util.PropertiesUtil;
 import com.braincao.mmall.vo.ProductDetailVo;
+import com.braincao.mmall.vo.ProductListVo;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service("iProductService")
 class ProductServiceImpl implements IProductService {
@@ -117,4 +123,64 @@ class ProductServiceImpl implements IProductService {
 
         return productDetailVo;
     }
+
+    //后台 获取产品list。采用mybatis pageHelper分页
+    //1.pageHelper--startPage
+    //2.填充自己的sql查询逻辑
+    //3.pageHelper--收尾
+    @Override
+    public ServerResponse<PageInfo> getProductList(int pageNum, int pageSize) {
+        //1.pageHelper--startPage
+        PageHelper.startPage(pageNum, pageSize);
+
+        //2.填充自己的sql查询逻辑
+        List<Product> productList = productMapper.selectList();
+        //包装一下,变成vo对象
+        List<ProductListVo> productListVoList = Lists.newArrayList();
+        for(Product productItem: productList){
+            ProductListVo productListVo = assembleProductListVo(productItem);
+            productListVoList.add(productListVo);
+        }
+
+        //3.pageHelper--收尾
+        PageInfo pageResult = new PageInfo(productList);
+        pageResult.setList(productListVoList);
+
+        return ServerResponse.createBySuccessData(pageResult);
+    }
+
+    private ProductListVo assembleProductListVo(Product product){
+        ProductListVo productListVo = new productListVo();
+        productListVo.setId(product.getId());
+        productListVo.setCategoryId(product.getCategoryId());
+        productListVo.setName(product.getName());
+        productListVo.setSubtitle(product.getSubtitle());
+        productListVo.setMainImage(product.getMainImage());
+        productListVo.setPrice(product.getPrice());
+        productListVo.setStatus(product.getStatus());
+        productListVo.setImageHost(PropertiesUtil.getProperty("ftp.server.httpURL.prefix", "http://img.happymmall.com/"));
+        return productListVo;
+    }
+
+    //产品搜索:通过productId、productName等搜索，且结果进行分页
+    public ServerResponse<PageInfo> searchProductListByIdOrName(String productName, Integer productId, int pageNum, int pageSize){
+        //1.pageHelper--startPage
+        PageHelper.startPage(pageNum, pageSize);
+
+        //2.填充自己的sql查询逻辑
+        List<Product> productList = productMapper.searchProductListByIdOrName(productName, productId);
+        //包装一下,变成vo对象
+        List<ProductListVo> productListVoList = Lists.newArrayList();
+        for(Product productItem: productList){
+            ProductListVo productListVo = assembleProductListVo(productItem);
+            productListVoList.add(productListVo);
+        }
+
+        //3.pageHelper--收尾
+        PageInfo pageResult = new PageInfo(productList);
+        pageResult.setList(productListVoList);
+
+        return ServerResponse.createBySuccessData(pageResult);
+    }
+
 }
