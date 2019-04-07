@@ -12,6 +12,8 @@ import com.braincao.mmall.util.PropertiesUtil;
 import com.braincao.mmall.vo.ProductDetailVo;
 import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Maps;
+import com.sun.deploy.net.HttpResponse;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Controller;
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.Map;
 
@@ -161,7 +164,7 @@ public class ProductManageController {
     }
 
     /**
-     * 文件上传。采用spring mvc的MultipartFile
+     * 图片(即文件)上传。采用spring mvc的MultipartFile上传后，再上传到ftp服务器
      * @param file
      * @param request
      * @return
@@ -187,4 +190,51 @@ public class ProductManageController {
         }
         return ServerResponse.createByErrorMessage("无权限操作，需要管理员权限");
     }
+
+    /**
+     * 富文本上传图片，与上面的图片文件上传差不多，但富文本对自己的返回值有要求
+     * 使用并按照simditor要求返回
+     * @param session
+     * @param file
+     * @param request
+     * @param httpServletResponse
+     * @return
+     */
+    @RequestMapping("richtext_img_upload.do")
+    @ResponseBody
+    public Map upload(HttpSession session, @RequestParam(value = "upload_file", required = false) MultipartFile file, HttpServletRequest request, HttpServletResponse httpServletResponse){
+        Map resultMap = Maps.newHashMap();
+        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        if (user == null) {
+            resultMap.put("success", false);
+            resultMap.put("msg", "请登录管理员");
+            return resultMap;
+        }
+        //校验是否是管理员
+        if (iUserService.checkAdminRole(user).isSuccess()) {
+            //是管理员，填充我们富文本上传图片的业务逻辑
+            String path = request.getSession().getServletContext().getRealPath("upload");//设置spring mvc上传文件的路径，在webapp目录下的upload文件夹里
+            String targetFileName = iFileService.upload(file, path);
+            if(StringUtils.isBlank(targetFileName)){
+                resultMap.put("success", false);
+                resultMap.put("msg", "上传失败");
+                return resultMap;
+            }
+            String url = PropertiesUtil.getProperty("ftp.server.httpURL.prefix") + targetFileName;
+            resultMap.put("success", true);
+            resultMap.put("msg", "上传成功");
+            resultMap.put("file_path", url);
+
+            //修改HttpServletResponse的头部给前端
+            httpServletResponse.addHeader("Access-Control-Allow-Headers", "X-File-Name");
+
+            return resultMap;
+        }
+        else{
+            resultMap.put("success", false);
+            resultMap.put("msg", "无权限操作，需要管理员权限");
+            return resultMap;
+        }
+    }
+
 }
