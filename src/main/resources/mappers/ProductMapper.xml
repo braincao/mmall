@@ -184,11 +184,18 @@
     order by id asc
   </select>
   
-  <select id="searchProductListByIdOrName" parameterType="map" resultMap="BaseResultMap">
+  <select id="searchProductListByIdAndName" parameterType="map" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List"/>
     from mmall_product
-    where id=#{productId} or name=#{productName}
+    <where>
+      <if test="productName!=null">
+        and name like #{productName}
+      </if>
+      <if test="productId!=null">
+        and id=#{productId}
+      </if>
+    </where>
     order by id asc
   </select>
 </mapper>

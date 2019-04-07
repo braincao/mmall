@@ -150,7 +150,7 @@ class ProductServiceImpl implements IProductService {
     }
 
     private ProductListVo assembleProductListVo(Product product){
-        ProductListVo productListVo = new productListVo();
+        ProductListVo productListVo = new ProductListVo();
         productListVo.setId(product.getId());
         productListVo.setCategoryId(product.getCategoryId());
         productListVo.setName(product.getName());
@@ -168,7 +168,12 @@ class ProductServiceImpl implements IProductService {
         PageHelper.startPage(pageNum, pageSize);
 
         //2.填充自己的sql查询逻辑
-        List<Product> productList = productMapper.searchProductListByIdOrName(productName, productId);
+        if(StringUtils.isNotBlank(productName)){
+            productName = new StringBuilder().append("%").append(productName).append("%").toString();
+        }
+
+        List<Product> productList = productMapper.searchProductListByIdAndName(productName, productId);
+
         //包装一下,变成vo对象
         List<ProductListVo> productListVoList = Lists.newArrayList();
         for(Product productItem: productList){
