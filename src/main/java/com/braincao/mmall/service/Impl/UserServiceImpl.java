@@ -1,7 +1,6 @@
 package com.braincao.mmall.service.Impl;
 
 import com.braincao.mmall.common.Const;
-import com.braincao.mmall.common.ResponseCode;
 import com.braincao.mmall.common.ServerResponse;
 import com.braincao.mmall.common.TokenCache;
 import com.braincao.mmall.dao.UserMapper;
@@ -11,7 +10,6 @@ import com.braincao.mmall.util.MD5Util;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.UUID;
 
 @Service("iUserService")
@@ -38,6 +36,7 @@ public class UserServiceImpl implements IUserService {
         if(user==null){
             return ServerResponse.createByErrorMessage("密码错误");
         }
+
 
         //密码置为空
         user.setPassword(StringUtils.EMPTY);

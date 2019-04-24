@@ -22,4 +22,10 @@ public interface IProductService {
     //产品搜索:通过productId、productName等搜索，且结果进行分页
     ServerResponse<PageInfo> searchProductListByIdOrName(String productName, Integer productId, int pageNum, int pageSize);
 
+    //前台 产品详情
+    ServerResponse<ProductDetailVo> getProductDetail(Integer productId);
+
+    //前台产品搜索:通过categoryId、keyword等搜索，且结果进行分页
+    ServerResponse<PageInfo> searchProductListByIdOrKeyword(Integer categoryId, String keyword, int pageNum, int pageSize, String orderBy);
+
 }

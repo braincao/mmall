@@ -1,5 +1,6 @@
 package com.braincao.mmall.dao;
 
+import com.braincao.mmall.pojo.Category;
 import com.braincao.mmall.pojo.Product;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -21,4 +22,7 @@ public interface ProductMapper {
     List<Product> selectList();
 
     List<Product> searchProductListByIdAndName(@RequestParam("productName") String productName, @RequestParam("productId") Integer productId);
+
+    List<Product> selectByNameAndCategoryIds(@RequestParam("productName")String productName,@RequestParam("categoryIdList")List<Integer> categoryIdList);
+
 }

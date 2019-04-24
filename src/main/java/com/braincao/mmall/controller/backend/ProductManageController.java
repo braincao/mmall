@@ -8,14 +8,11 @@ import com.braincao.mmall.pojo.User;
 import com.braincao.mmall.service.IFileService;
 import com.braincao.mmall.service.IProductService;
 import com.braincao.mmall.service.IUserService;
-import com.braincao.mmall.util.PropertiesUtil;
 import com.braincao.mmall.vo.ProductDetailVo;
 import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Maps;
-import com.sun.deploy.net.HttpResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -164,7 +161,7 @@ public class ProductManageController {
     }
 
     /**
-     * 图片(即文件)上传。采用spring mvc的MultipartFile上传后，再上传到ftp服务器
+     * 图片(即文件)上传。采用spring mvc的MultipartFile上传后，再上传到ftp服务器(mac ftp不好配置，这里就不上传到ftp而是放在本地文件夹中)
      * @param file
      * @param request
      * @return
@@ -179,9 +176,15 @@ public class ProductManageController {
         //校验是否是管理员
         if (iUserService.checkAdminRole(user).isSuccess()) {
             //是管理员，填充我们文件上传的业务逻辑
-            String path = request.getSession().getServletContext().getRealPath("upload");//设置spring mvc上传文件的路径，在webapp目录下的upload文件夹里
+
+            //设置spring mvc上传文件的路径，在webapp目录下的upload文件夹里
+            //具体在Users/braincao/ProjectsNow/mmall/target/mmall/upload中
+            String path = request.getSession().getServletContext().getRealPath("upload");
+
             String targetFileName = iFileService.upload(file, path);
-            String url = PropertiesUtil.getProperty("ftp.server.httpURL.prefix") + targetFileName;
+
+//            String url = PropertiesUtil.getProperty("ftp.server.httpURL.prefix") + targetFileName;
+            String url = "webapp/upload/" + targetFileName;
 
             Map fileMap = Maps.newHashMap();
             fileMap.put("uri", targetFileName);
@@ -220,7 +223,8 @@ public class ProductManageController {
                 resultMap.put("msg", "上传失败");
                 return resultMap;
             }
-            String url = PropertiesUtil.getProperty("ftp.server.httpURL.prefix") + targetFileName;
+//            String url = PropertiesUtil.getProperty("ftp.server.httpURL.prefix") + targetFileName;
+            String url = "webapp/upload/" + targetFileName;
             resultMap.put("success", true);
             resultMap.put("msg", "上传成功");
             resultMap.put("file_path", url);

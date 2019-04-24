@@ -19,4 +19,7 @@ public interface ICategoryService {
     //获取当前分类id及递归子节点categoryId
     ServerResponse<List<Category>> getCategoryAndDeepChildrenCategory(Integer categoryId);
 
+    //获取当前分类id及递归子节点categoryId，返回List<Integer>
+    ServerResponse<List<Integer>> getCategoryAndDeepChildrenCategoryById(Integer categoryId);
+
 }

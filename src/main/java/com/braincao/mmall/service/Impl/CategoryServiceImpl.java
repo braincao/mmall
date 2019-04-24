@@ -90,6 +90,24 @@ public class CategoryServiceImpl implements ICategoryService {
         return ServerResponse.createBySuccessData(categoryList);
     }
 
+    //获取当前分类id及递归子节点categoryId，返回List<Integer>
+    public ServerResponse<List<Integer>> getCategoryAndDeepChildrenCategoryById(Integer categoryId){
+        if(categoryId==null){
+            return ServerResponse.createByErrorMessage("修改品类参数错误");
+        }
+        //采用guava的set，很强大
+        Set<Category> categorySet = Sets.newHashSet();
+        //递归，找到所有子节点存到categorySet中
+        findChildrenCategory(categoryId, categorySet);
+
+        List<Integer> categoryIdList = Lists.newArrayList();
+
+        for(Category categoryItem: categorySet){
+            categoryIdList.add(categoryItem.getId());
+        }
+        return ServerResponse.createBySuccessData(categoryIdList);
+    }
+
     //递归算法，获取递归的所有子节点
     private Set<Category> findChildrenCategory(Integer categoryId, Set<Category> categorySet){
         Category category = categoryMapper.selectByPrimaryKey(categoryId);

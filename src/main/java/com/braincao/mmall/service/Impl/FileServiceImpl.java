@@ -1,8 +1,6 @@
 package com.braincao.mmall.service.Impl;
 
 import com.braincao.mmall.service.IFileService;
-import com.braincao.mmall.util.FTPUtil;
-import com.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -22,6 +20,7 @@ public class FileServiceImpl implements IFileService {
 
     //用户A B都上传abc.jpg，不发生覆盖，因此需要宇宙无敌的UUID来命名fileUploadName
     public String upload(MultipartFile file, String path){
+        System.out.println(path);
         String fileName = file.getOriginalFilename();
         //获取扩展名 abc.jpg-->jpg
         String fileExtensionName = fileName.substring(fileName.lastIndexOf(".")+1);
@@ -42,11 +41,11 @@ public class FileServiceImpl implements IFileService {
             file.transferTo(targetFile);
             //spring mvc 上传文件成功
 
-            FTPUtil.uploadFile(Lists.newArrayList(targetFile));
+//            FTPUtil.uploadFile(Lists.newArrayList(targetFile));
             //将targetFile上传到我们ftp服务器上
 
             //文件上传到ftp之后，删除upload中的该文件(即删除tomcat中的文件)
-            targetFile.delete();
+//            targetFile.delete();
         } catch (IOException e) {
             logger.error("上传文件异常", e);
             return null;

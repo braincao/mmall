@@ -1,11 +1,13 @@
 package com.braincao.mmall.service.Impl;
 
+import com.braincao.mmall.common.Const;
 import com.braincao.mmall.common.ResponseCode;
 import com.braincao.mmall.common.ServerResponse;
 import com.braincao.mmall.dao.CategoryMapper;
 import com.braincao.mmall.dao.ProductMapper;
 import com.braincao.mmall.pojo.Category;
 import com.braincao.mmall.pojo.Product;
+import com.braincao.mmall.service.ICategoryService;
 import com.braincao.mmall.service.IProductService;
 import com.braincao.mmall.util.DateTimeUtil;
 import com.braincao.mmall.util.PropertiesUtil;
@@ -18,6 +20,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service("iProductService")
@@ -28,6 +31,9 @@ class ProductServiceImpl implements IProductService {
 
     @Autowired
     private CategoryMapper categoryMapper;
+
+    @Autowired
+    private ICategoryService iCategoryService;
 
     //后台 新增OR更新产品
     @Override
@@ -185,6 +191,75 @@ class ProductServiceImpl implements IProductService {
         PageInfo pageResult = new PageInfo(productList);
         pageResult.setList(productListVoList);
 
+        return ServerResponse.createBySuccessData(pageResult);
+    }
+
+    //前台 产品详情
+    public ServerResponse<ProductDetailVo> getProductDetail(Integer productId){
+        if(productId==null){
+            return ServerResponse.createByErrorCodeMessage(ResponseCode.ILLEGAL_ARGUMENT.getStatus(),ResponseCode.ILLEGAL_ARGUMENT.getMsg());
+        }
+        Product product = productMapper.selectByPrimaryKey(productId);
+        if(product==null){
+            return ServerResponse.createByErrorMessage("产品已下架或者删除");
+        }
+        if(product.getStatus() != Const.ProductStatusEnum.ON_SALE.getCode()){
+            return ServerResponse.createByErrorMessage("产品已下架或者删除");
+        }
+
+        //这里需要创建VO对象--value object
+        ProductDetailVo productDetailVo = assembleProductDetailVo(product);
+        return ServerResponse.createBySuccessData(productDetailVo);
+    }
+
+    //前台产品搜索:通过categoryId、keyword等搜索，且结果进行分页(categoryId,keyword两个参数都可以为空)
+    public ServerResponse<PageInfo> searchProductListByIdOrKeyword(Integer categoryId, String keyword, int pageNum, int pageSize, String orderBy){
+        if(categoryId==null && StringUtils.isBlank(keyword)){
+            return ServerResponse.createByErrorCodeMessage(ResponseCode.ILLEGAL_ARGUMENT.getStatus(),ResponseCode.ILLEGAL_ARGUMENT.getMsg());
+        }
+
+        //1.pageHelper--startPage
+        PageHelper.startPage(pageNum, pageSize);
+
+        //2.填充自己的sql查询逻辑
+        List<Integer> categoryIdList = new ArrayList<>();
+
+        if(StringUtils.isNotBlank(keyword)){
+            keyword = new StringBuilder().append("%").append(keyword).append("%").toString();
+        }
+
+        if(categoryId != null){
+            Category category = categoryMapper.selectByPrimaryKey(categoryId);
+            if(category == null && StringUtils.isBlank(keyword)){
+                //没有该分类,并且还没有关键字,这个时候返回一个空的结果集,不报错
+                PageHelper.startPage(pageNum,pageSize);
+                List<ProductListVo> productListVoList = Lists.newArrayList();
+                PageInfo pageInfo = new PageInfo(productListVoList);
+                return ServerResponse.createBySuccessData(pageInfo);
+            }
+            categoryIdList = iCategoryService.getCategoryAndDeepChildrenCategoryById(categoryId).getData();
+        }
+
+        //排序处理
+        if(StringUtils.isNotBlank(orderBy)){
+            if(Const.ProductListOrderBy.PRICE_ASC_DESC.contains(orderBy)){
+                String[] orderByArray = orderBy.split("_");
+                PageHelper.orderBy(orderByArray[0]+" "+orderByArray[1]);
+            }
+        }
+
+        List<Product> productList = productMapper.selectByNameAndCategoryIds(StringUtils.isBlank(keyword)?null:keyword,categoryIdList.size()==0?null:categoryIdList);
+
+        //包装一下,变成vo对象
+        List<ProductListVo> productListVoList = Lists.newArrayList();
+        for(Product product : productList){
+            ProductListVo productListVo = assembleProductListVo(product);
+            productListVoList.add(productListVo);
+        }
+
+        //3.pageHelper--收尾
+        PageInfo pageResult = new PageInfo(productList);
+        pageResult.setList(productListVoList);
         return ServerResponse.createBySuccessData(pageResult);
     }
 
