@@ -184,7 +184,7 @@ public class ProductManageController {
             String targetFileName = iFileService.upload(file, path);
 
 //            String url = PropertiesUtil.getProperty("ftp.server.httpURL.prefix") + targetFileName;
-            String url = "webapp/upload/" + targetFileName;
+            String url = "http://localhost:8080/upload/" + targetFileName;
 
             Map fileMap = Maps.newHashMap();
             fileMap.put("uri", targetFileName);
@@ -224,7 +224,7 @@ public class ProductManageController {
                 return resultMap;
             }
 //            String url = PropertiesUtil.getProperty("ftp.server.httpURL.prefix") + targetFileName;
-            String url = "webapp/upload/" + targetFileName;
+            String url = "http://localhost:8080/upload/" + targetFileName;
             resultMap.put("success", true);
             resultMap.put("msg", "上传成功");
             resultMap.put("file_path", url);

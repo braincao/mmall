@@ -141,6 +141,14 @@ class ProductServiceImpl implements IProductService {
 
         //2.填充自己的sql查询逻辑
         List<Product> productList = productMapper.selectList();
+
+
+        System.out.println("========");
+        for(Product i: productList){
+            System.out.println(i.getCategoryId());
+        }
+        System.out.println("========");
+
         //包装一下,变成vo对象
         List<ProductListVo> productListVoList = Lists.newArrayList();
         for(Product productItem: productList){

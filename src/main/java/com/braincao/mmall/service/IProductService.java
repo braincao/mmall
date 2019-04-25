@@ -19,7 +19,7 @@ public interface IProductService {
     //后台 获取产品list。采用mybatis pageHelper分页
     ServerResponse<PageInfo> getProductList(int pageNum, int pageSize);
 
-    //产品搜索:通过productId、productName等搜索，且结果进行分页
+    //后台 产品搜索:通过productId、productName等搜索，且结果进行分页
     ServerResponse<PageInfo> searchProductListByIdOrName(String productName, Integer productId, int pageNum, int pageSize);
 
     //前台 产品详情
