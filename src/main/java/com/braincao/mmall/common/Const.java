@@ -18,6 +18,14 @@ public class Const {
         int ROLE_ADMIN = 1; //管理员
     }
 
+    public interface Cart{
+        int CHECKED = 1; //购物车选中状态
+        int UN_CHECKED = 0; //购物车未选中状态
+
+        String LIMIT_NUM_FAIL = "LIMIT_NUM_FAIL";//购买数量与库存比较的判断时，返回的判断结果
+        String LIMIT_NUM_SUCCESS = "LIMIT_NUM_SUCCESS";
+    }
+
     public enum ProductStatusEnum{
         ON_SALE("在售", 1),
         OFF_SHELF("下架", 2),

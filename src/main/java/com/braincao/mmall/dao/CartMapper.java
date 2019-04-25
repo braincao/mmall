@@ -1,6 +1,9 @@
 package com.braincao.mmall.dao;
 
 import com.braincao.mmall.pojo.Cart;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 public interface CartMapper {
     int deleteByPrimaryKey(Integer id);
@@ -14,5 +17,12 @@ public interface CartMapper {
     int updateByPrimaryKeySelective(Cart record);
 
     int updateByPrimaryKey(Cart record);
+
+    Cart selectCartByUserIdProductId(@Param("userId") Integer userId, @Param("productId") Integer productId);
+
+    List<Cart> selectCartListByUserId(Integer userId);
+
+    //看当前用户购物车是否全选(未勾选的个数为0即为全选了)
+    int selectCartProductCheckedStatusByUserId(Integer userId);
 
 }
