@@ -35,10 +35,7 @@ public class ICartServiceImpl implements ICartService {
         if(productId==null || count==null){
             return ServerResponse.createByErrorCodeMessage(ResponseCode.ILLEGAL_ARGUMENT.getStatus(), ResponseCode.ILLEGAL_ARGUMENT.getMsg());
         }
-        System.out.println("0" + productId + " " + count);
         Cart cart = cartMapper.selectCartByUserIdProductId(userId, productId);
-        System.out.println("011" + productId + " " + count);
-
         if (cart == null) {
             //这个产品不在这个购物车里，需要新增这个产品的记录
             Cart cartItem = new Cart();
@@ -49,13 +46,14 @@ public class ICartServiceImpl implements ICartService {
             cartMapper.insert(cartItem);
         } else {
             //这个产品在这个购物车里，需要增加这个产品的数量
-            count = cart.getQuantity() + 1;
+            count = cart.getQuantity() + count;
             cart.setQuantity(count);
             cartMapper.updateByPrimaryKeySelective(cart);
         }
+        System.out.println("0000");
         //用户添加商品到购物车后，前台的状态需要根据库存、价格来展示，因此需要下面的VO来计算并封装，展示给前台
         CartVo cartVo = this.getCartVoLimit(userId);
-        System.out.println("1" + productId + " " + count);
+        System.out.println("1111");
 
         return ServerResponse.createBySuccessData(cartVo);
     }
@@ -78,7 +76,6 @@ public class ICartServiceImpl implements ICartService {
         if(CollectionUtils.isNotEmpty(cartList)){
             for(Cart cartItem: cartList){
                 CartProductVo cartProductVo = new CartProductVo();
-
                 cartProductVo.setId(cartItem.getId());
                 cartProductVo.setUserId(cartItem.getUserId());
                 cartProductVo.setProductId(cartItem.getProductId());

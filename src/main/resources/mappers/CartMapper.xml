@@ -121,9 +121,7 @@
     select
     <include refid="Base_Column_List" />
     from mmall_cart
-    where
-    user_id = #{userId}
-    and product_id = #{productId}
+    where user_id = #{userId} and product_id = #{productId}
   </select>
   <select id="selectCartListByUserId" parameterType="int" resultMap="BaseResultMap">
     select
