@@ -25,4 +25,13 @@ public interface CartMapper {
     //看当前用户购物车是否全选(未勾选的个数为0即为全选了)
     int selectCartProductCheckedStatusByUserId(Integer userId);
 
+    //移除购物车某个/些产品
+    int deleteByUserIdProductList(@Param("userId") Integer userId, @Param("productList") List<String> productList);
+
+    //设置当前用户购物车是否全选
+    int updateCartProductCheckedStatusByUserId(@Param("userId") Integer userId, @Param("checked") Integer checked, @Param("productId") Integer productId);
+
+    //设置当前用户购物车是否全选
+    int getCartProductCount(Integer userId);
+
 }

@@ -11,6 +11,7 @@ import com.braincao.mmall.service.ICartService;
 import com.braincao.mmall.util.BigDecimalUtil;
 import com.braincao.mmall.vo.CartProductVo;
 import com.braincao.mmall.vo.CartVo;
+import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,12 +51,8 @@ public class ICartServiceImpl implements ICartService {
             cart.setQuantity(count);
             cartMapper.updateByPrimaryKeySelective(cart);
         }
-        System.out.println("0000");
         //用户添加商品到购物车后，前台的状态需要根据库存、价格来展示，因此需要下面的VO来计算并封装，展示给前台
-        CartVo cartVo = this.getCartVoLimit(userId);
-        System.out.println("1111");
-
-        return ServerResponse.createBySuccessData(cartVo);
+        return listProduct(userId);
     }
 
     /**
@@ -133,5 +130,58 @@ public class ICartServiceImpl implements ICartService {
             return false;
         }
         return cartMapper.selectCartProductCheckedStatusByUserId(userId)==0;
+    }
+
+    //更新购物车某个产品数量，并前台根据返回的CartVo展示购物车
+    @Override
+    public ServerResponse<CartVo> updateProduct(Integer userId, Integer productId, Integer count) {
+        if(productId==null || count==null){
+            return ServerResponse.createByErrorCodeMessage(ResponseCode.ILLEGAL_ARGUMENT.getStatus(), ResponseCode.ILLEGAL_ARGUMENT.getMsg());
+        }
+        Cart cart = cartMapper.selectCartByUserIdProductId(userId, productId);
+        if (cart != null) {
+            //这个产品在这个购物车里，需要更新这个产品的记录
+            cart.setQuantity(count);
+            cartMapper.updateByPrimaryKeySelective(cart);
+        }
+        //更新购物车后，前台的状态需要根据库存、价格来展示，因此需要下面的VO来计算并封装，展示给前台
+        return listProduct(userId);
+    }
+
+    //移除购物车某个/些产品
+    @Override
+    public ServerResponse<CartVo> deleteProduct(Integer userId, String productIds){
+        List<String> productList = Splitter.on(",").splitToList(productIds);
+        if(CollectionUtils.isEmpty(productList)){
+            return ServerResponse.createByErrorCodeMessage(ResponseCode.ILLEGAL_ARGUMENT.getStatus(), ResponseCode.ILLEGAL_ARGUMENT.getMsg());
+        }
+        cartMapper.deleteByUserIdProductList(userId, productList);
+        //更新购物车后，前台的状态需要根据库存、价格来展示，因此需要下面的VO来计算并封装，展示给前台
+        return listProduct(userId);
+    }
+
+    //购物车List列表
+    @Override
+    public ServerResponse<CartVo> listProduct(Integer userId){
+        //更新购物车后，前台的状态需要根据库存、价格来展示，因此需要下面的VO来计算并封装，展示给前台
+        CartVo cartVo = this.getCartVoLimit(userId);
+        return ServerResponse.createBySuccessData(cartVo);
+    }
+
+    //购物车全选、全反选、单独选、单独反选
+    @Override
+    public ServerResponse<CartVo> selectOrUnSelectAllProduct(Integer userId, Integer checked, Integer productId){
+        cartMapper.updateCartProductCheckedStatusByUserId(userId, checked, productId);
+        return listProduct(userId);
+    }
+
+    //查询在购物车里的产品数量
+    @Override
+    public ServerResponse<Integer> getCartProductCount(Integer userId){
+        if(userId==null){
+            return ServerResponse.createBySuccessData(0);
+        }
+        int row = cartMapper.getCartProductCount(userId);
+        return ServerResponse.createBySuccessData(row);
     }
 }
