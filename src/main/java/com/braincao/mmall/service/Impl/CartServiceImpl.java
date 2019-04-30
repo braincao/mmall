@@ -22,7 +22,7 @@ import java.util.List;
 
 @Service("iCartService")
 //定义iCartService名字，就可以在controller层自动完成注入
-public class ICartServiceImpl implements ICartService {
+public class CartServiceImpl implements ICartService {
 
     @Autowired
     private CartMapper cartMapper;
