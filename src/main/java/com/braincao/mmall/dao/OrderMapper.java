@@ -3,6 +3,8 @@ package com.braincao.mmall.dao;
 import com.braincao.mmall.pojo.Order;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 public interface OrderMapper {
     int deleteByPrimaryKey(Integer id);
 
@@ -19,4 +21,11 @@ public interface OrderMapper {
     Order selectByUserIdOrderNo(@Param("userId") Integer userId, @Param("orderNo")Long orderNo);
 
     Order selectByOrderNo(Long orderNo);
+
+    List<Order> selectByUserId(Integer userId);
+
+    //后台
+    List<Order> selectAllOrder();
+
+
 }

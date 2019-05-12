@@ -22,6 +22,8 @@ public interface CartMapper {
 
     List<Cart> selectCartListByUserId(Integer userId);
 
+    List<Cart> selectCheckedCartListByUserId(Integer userId);
+
     //看当前用户购物车是否全选(未勾选的个数为0即为全选了)
     int selectCartProductCheckedStatusByUserId(Integer userId);
 
